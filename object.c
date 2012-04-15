@@ -37,26 +37,37 @@ Object *symbol_obj(const char *value) {
     return obj;
 }
 
+Object *string_obj(const char *value) {
+    Object *obj = base_obj();
+    obj->type = STRING;
+    obj->string_val = (char *)malloc(strlen(value) + 1);
+    strcpy(obj->string_val, value);
+    return obj;
+}
+
 
 // Memory management
 
-void inc_ref(Object *obj)
+Object *inc_ref(Object *obj)
 {
-    if (obj == NULL) return;
+    if (obj == NULL) return NULL;
     obj->ref_count++;
+    return obj;
 }
 
-void dec_ref(Object *obj)
+Object *dec_ref(Object *obj)
 {
-    if (obj == NULL) return;
+    if (obj == NULL) return NULL;
     if (obj->ref_count == 1) {
-        debug("releasing object: ");
-        inspect_object(obj);
+        debug("releasing object: %s", object_str(obj)->string_val);
 
         switch (obj->type) {
         case CELL:
             dec_ref(car(obj));
             dec_ref(cdr(obj));
+            break;
+        case STRING:
+            free(obj->string_val);
             break;
         case SYMBOL:
             free(obj->symbol_val);
@@ -66,8 +77,10 @@ void dec_ref(Object *obj)
         }
 
         free(obj);
+        return NULL;
     } else {
         obj->ref_count--;
+        return obj;
     }
 }
 
@@ -126,6 +139,9 @@ void inspect_object(Object *obj)
         case SYMBOL:
             printf("Symbol: %s", obj->symbol_val);
             break;
+        case STRING:
+            printf("String: %s", obj->string_val);
+            break;
         default:
             printf("Unrecognised Object");
             break;
@@ -157,45 +173,112 @@ void deep_inspect_object(Object *obj)
 
 void print_object(Object *obj)
 {
-    if (obj == NULL) {
-        printf("NULL");
-    } else {
-        switch (obj->type) {
-        case CELL:
-            printf("Cell");
-            break;
-        case INTEGER:
-            printf("%ld", obj->int_val);
-            break;
-        case FLOAT:
-            printf("%.6f", obj->float_val);
-            break;
-        case SYMBOL:
-            printf("\"%s\"", obj->symbol_val);
-            break;
-        default:
-            printf("(Unrecognised Object)");
-            break;
-        }
-    }
+    Object *str = object_str(obj);
+    puts(str->string_val);
+    dec_ref(str);
 }
 
 void print_list(Object *obj)
 {
-    if (obj->type != CELL) {
-        debug("Invalid object type passed to print_list");
-        return;
-    }
+    Object *str_obj = list_str(obj);
+    puts(str_obj->string_val);
+    dec_ref(str_obj);
+}
 
-    printf("[");
+Object *list_str(Object *obj)
+{
+    Object *obj_str, *list_str_obj;
+    size_t obj_str_len, buf_len = 3, written = 0;
+    // start with the buffer as 3 bytes - one for each bracket, one for \0
+    char *buf = (char *)malloc(buf_len);
+    written += snprintf(buf, buf_len, "[");
+
     int i = 0;
     while (obj != NULL && obj->type == CELL) {
-        if (i++ != 0) {
-           printf(", ");
+        // for each cell in the list, get the string representation of it
+        obj_str = object_str(car(obj));
+        obj_str_len = strlen(obj_str->string_val);
+        buf_len += obj_str_len;
+
+        if (i != 0) {
+            // increase the buffer length for the comma and space
+            buf_len += 2;
         }
-        print_object(car(obj));
+
+        // realloc so we have enough space to add in the object's str
+        buf = realloc(buf, buf_len);
+
+        if (i != 0) {
+            // add in the comma and space
+            written += snprintf(buf + written, 3, ", ");
+        }
+
+        // copy in the object's string representation
+        strncpy(buf + written, obj_str->string_val, obj_str_len);
+        written += obj_str_len;
+
+        // traverse to the next object in the list and continue
         obj = cdr(obj);
+        i++;
     }
-    printf("]\n");
+    // add the trailing bracket - we alloced memory for this at the start
+    written += snprintf(buf + written, 2, "]");
+
+    list_str_obj = string_obj(buf);
+    free(buf);
+    return list_str_obj;
+}
+
+Object *object_str(Object *obj)
+{
+    char *buf;
+    int buf_len;
+    Object *car_str, *cdr_str, *str_obj;
+
+    if (obj == NULL) {
+        return string_obj("null");
+    } else {
+        switch (obj->type) {
+        case CELL:
+            car_str = object_str(car(obj));
+            cdr_str = object_str(cdr(obj));
+
+            buf_len =  strlen(car_str->string_val);
+            buf_len += strlen(cdr_str->string_val);
+            buf_len += 5;  // 2 parens + space + comma + \0
+
+            buf = (char *)malloc(buf_len);
+            snprintf(buf, buf_len, "(%s, %s)", car_str->string_val,
+                                               cdr_str->string_val);
+
+            dec_ref(car_str);
+            dec_ref(cdr_str);
+            break;
+        case INTEGER:
+            buf = (char *)malloc(21);  // max 64-bit int = 20 bytes + \0
+            snprintf(buf, 21, "%ld", obj->int_val);
+            break;
+        case FLOAT:
+            buf = (char *)malloc(28);  // max formatted double = 28 bytes
+            snprintf(buf, 28, "%.20g", obj->float_val);
+            break;
+        case STRING:
+            buf_len = strlen(obj->string_val) + 3;  // strlen + \0 + 2 quotes
+            buf = (char *)malloc(buf_len);
+            snprintf(buf, buf_len, "\"%s\"", obj->string_val);
+            break;
+        case SYMBOL:
+            buf_len = strlen(obj->symbol_val) + 2;  // strlen + \0 + colon
+            buf = (char *)malloc(buf_len);
+            snprintf(buf, buf_len, ":%s", obj->symbol_val);
+            break;
+        default:
+            buf = "(Unrecognised Object)";
+            break;
+        }
+        str_obj = string_obj(buf);
+        free(buf);
+        return str_obj;
+    }
 }
 

@@ -3,9 +3,10 @@
 
 typedef enum {
     CELL,
+    SYMBOL,
+    STRING,
     INTEGER,
     FLOAT,
-    SYMBOL,
     NIL
 } ObjectType;
 
@@ -28,6 +29,7 @@ struct Object {
         long int_val;
         double float_val;
         char *symbol_val;
+        char *string_val;
     };
 };
 
@@ -35,10 +37,11 @@ struct Object {
 Object *int_obj(long value);
 Object *float_obj(double value);
 Object *symbol_obj(const char *value);
+Object *string_obj(const char *value);
 
 // Memory management
-void inc_ref(Object *obj);
-void dec_ref(Object *obj);
+Object *inc_ref(Object *obj);
+Object *dec_ref(Object *obj);
 
 // List operations
 Object *car(Object *obj);
@@ -50,5 +53,7 @@ void inspect_object(Object *obj);
 void deep_inspect_object(Object *obj);
 void print_object(Object *obj);
 void print_list(Object *obj);
+Object *object_str(Object *obj);
+Object *list_str(Object *obj);
 
 #endif

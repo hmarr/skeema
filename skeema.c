@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     /*    print_object(token);*/
     /*}*/
 
-    char *stream = "(x (y 2 3) 1)";
+    char *stream = "(x (y 2 3) 4.5 1)";
     Object *sexp = parse(&stream);
     print_object(sexp);
     print_list(sexp);

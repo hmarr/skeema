@@ -211,7 +211,7 @@ Object *object_str(Object *obj)
         case SYMBOL:
             buf_len = strlen(obj->symbol_val) + 2;  // strlen + \0 + colon
             buf = (char *)malloc(buf_len);
-            snprintf(buf, buf_len, ":%s", obj->symbol_val);
+            snprintf(buf, buf_len, "'%s", obj->symbol_val);
             break;
         default:
             buf = "(Unrecognised Object)";

@@ -2,10 +2,11 @@
 #include <stdlib.h>
 
 #include "object.h"
+#include "scanner.h"
 
 int main(int argc, char *argv[])
 {
-    Object *a, *b, *c, *d, *e, *f;
+    /*Object *a, *b, *c, *d, *e, *f;
 
     f = cons(float_obj(7.5), NULL);
     e = cons(symbol_obj("some-symbol"), f);
@@ -28,6 +29,13 @@ int main(int argc, char *argv[])
     Object *harry = string_obj("harry");
     print_object(harry);
     dec_ref(harry);
+    */
+
+    char *stream = "     (======== 5 69 ) (Math.pi 6 (mmmmmmm hiya))";
+    Object *token;
+    while ((token = read_token(&stream)) != NULL) {
+        print_object(token);
+    }
 
     return 0;
 }

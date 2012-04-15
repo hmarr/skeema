@@ -1,7 +1,7 @@
 all: debug
 
 release:
-	gcc -O2 -o skeema skeema.c object.c
+	gcc -O2 -o skeema skeema.c utils.c object.c scanner.c
 
 debug:
-	gcc -Wall -g -DDEBUG -o skeema skeema.c object.c
+	gcc -Wall -g -DDEBUG -o skeema skeema.c utils.c object.c scanner.c

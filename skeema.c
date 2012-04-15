@@ -7,41 +7,16 @@
 
 int main(int argc, char *argv[])
 {
-    /*Object *a, *b, *c, *d, *e, *f;
-
-    f = cons(float_obj(7.5), NULL);
-    e = cons(symbol_obj("some-symbol"), f);
-    d = cons(string_obj("a string"), e);
-    c = cons(int_obj(3), d);
-    b = cons(int_obj(2), c);
-    a = cons(int_obj(1), b);
-
-    dec_ref(f);
-    dec_ref(e);
-    dec_ref(d);
-    dec_ref(c);
-    dec_ref(b);
-
-    print_list(a);
-    print_object(a);
-
-    dec_ref(a);
-
-    Object *harry = string_obj("harry");
-    print_object(harry);
-    dec_ref(harry);
-    */
-
-    /*char *stream = "     (======== 5 69 ) (Math.pi 6 (mmmmmmm hiya))";*/
-    /*Object *token;*/
-    /*while ((token = read_token(&stream)) != NULL) {*/
-    /*    print_object(token);*/
-    /*}*/
-
-    char *stream = "(x (y 2 3) 4.5 \"tes\\\\t \\\"str\" 1)";
-    Object *sexp = parse(&stream);
-    print_object(sexp);
-    print_list(sexp);
+    char *line = (char *)malloc(1024);
+    while (printf("skeema> "), fgets(line, 1024, stdin)) {
+        if (line[0] == '\n') break;
+        Object *sexp = parse(&line);
+        if (sexp->type == CELL) {
+            print_list(sexp);
+        } else {
+            print_object(sexp);
+        }
+    }
 
     return 0;
 }

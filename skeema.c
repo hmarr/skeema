@@ -5,19 +5,30 @@
 
 int main(int argc, char *argv[])
 {
-    Object obj = { INTEGER, { .int_val = 5 } };
-    print_object(&obj);
+    Object *harry = symbol_obj("harry");
+    inspect_object(harry);
+    dec_ref(harry);
 
     Object *a, *b, *c, *d, *e, *f;
 
     f = cons(float_obj(7.5), NULL);
-    e = cons(int_obj(5), f);
+    e = cons(symbol_obj("five"), f);
     d = cons(int_obj(4), e);
     c = cons(int_obj(3), d);
     b = cons(int_obj(2), c);
     a = cons(int_obj(1), b);
 
-    print_object(a);
+    dec_ref(f);
+    dec_ref(e);
+    dec_ref(d);
+    dec_ref(c);
+    dec_ref(b);
+
+    deep_inspect_object(a);
+
+    print_list(a);
+
+    dec_ref(a);
 
     return 0;
 }

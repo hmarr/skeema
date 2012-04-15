@@ -1,2 +1,2 @@
 all:
-	gcc -Wall -o skeema skeema.c object.c
+	gcc -Wall -g -o skeema skeema.c object.c

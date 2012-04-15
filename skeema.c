@@ -20,16 +20,14 @@ int main(int argc, char *argv[])
     dec_ref(c);
     dec_ref(b);
 
-    //deep_inspect_object(a);
-
     print_list(a);
     print_object(a);
 
     dec_ref(a);
 
-    /*Object *harry = string_obj("harry");
+    Object *harry = string_obj("harry");
     print_object(harry);
-    dec_ref(harry);*/
+    dec_ref(harry);
 
     return 0;
 }

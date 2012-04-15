@@ -112,65 +112,6 @@ Object *cons(Object *car, Object *cdr)
 
 // Utilities
 
-int print_depth = 0;
-
-void print_indent()
-{
-    int i;
-    for (i = 0; i < print_depth * 2; i++, putchar(' ')) ;
-}
-
-void inspect_object(Object *obj)
-{
-    printf("<");
-    if (obj == NULL) {
-        printf("NULL>\n");
-    } else {
-        switch (obj->type) {
-        case CELL:
-            printf("Cell");
-            break;
-        case INTEGER:
-            printf("Integer: %ld", obj->int_val);
-            break;
-        case FLOAT:
-            printf("Float: %f", obj->float_val);
-            break;
-        case SYMBOL:
-            printf("Symbol: %s", obj->symbol_val);
-            break;
-        case STRING:
-            printf("String: %s", obj->string_val);
-            break;
-        default:
-            printf("Unrecognised Object");
-            break;
-        }
-        printf(", rc: %d>\n", obj->ref_count);
-    }
-}
-
-void deep_inspect_object(Object *obj)
-{
-    inc_ref(obj);
-    inspect_object(obj);
-
-    if (obj != NULL && obj->type == CELL) {
-        print_depth++;
-
-        print_indent();
-        printf("(car) ");
-        deep_inspect_object(car(obj));
-
-        print_indent();
-        printf("(cdr) ");
-        deep_inspect_object(cdr(obj));
-
-        print_depth--;
-    }
-    dec_ref(obj);
-}
-
 void print_object(Object *obj)
 {
     Object *str = object_str(obj);

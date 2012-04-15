@@ -3,6 +3,7 @@
 
 #include "object.h"
 #include "scanner.h"
+#include "parser.h"
 
 int main(int argc, char *argv[])
 {
@@ -31,11 +32,16 @@ int main(int argc, char *argv[])
     dec_ref(harry);
     */
 
-    char *stream = "     (======== 5 69 ) (Math.pi 6 (mmmmmmm hiya))";
-    Object *token;
-    while ((token = read_token(&stream)) != NULL) {
-        print_object(token);
-    }
+    /*char *stream = "     (======== 5 69 ) (Math.pi 6 (mmmmmmm hiya))";*/
+    /*Object *token;*/
+    /*while ((token = read_token(&stream)) != NULL) {*/
+    /*    print_object(token);*/
+    /*}*/
+
+    char *stream = "(x (y 2 3) 1)";
+    Object *sexp = parse(&stream);
+    print_object(sexp);
+    print_list(sexp);
 
     return 0;
 }

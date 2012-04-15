@@ -1,15 +1,16 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "utils.h"
 #include "scanner.h"
 
-int is_space(char c)
+bool is_space(char c)
 {
     return c == ' ' || c == '\t' || c == '\n';
 }
 
-int is_delim(char c)
+bool is_delim(char c)
 {
     return is_space(c) || c == '(' || c == ')' || c == '\0';
 }
@@ -48,3 +49,4 @@ Object *read_token(char **stream_ptr)
 
     return token;
 }
+

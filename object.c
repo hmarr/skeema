@@ -112,6 +112,14 @@ Object *cons(Object *car, Object *cdr)
 
 // Utilities
 
+bool symbol_eq(Object *a, Object *b)
+{
+    if (a->type != SYMBOL || b->type != SYMBOL) {
+        return false;
+    }
+    return strcmp(a->symbol_val, b->symbol_val) == 0;
+}
+
 void print_object(Object *obj)
 {
     Object *str = object_str(obj);
@@ -136,8 +144,12 @@ Object *list_str(Object *obj)
 
     int i = 0;
     while (obj != NULL && obj->type == CELL) {
-        // for each cell in the list, get the string representation of it
-        obj_str = object_str(car(obj));
+        // for each object in the list, get the string representation of it
+        if (car(obj)->type == CELL) {
+            obj_str = list_str(car(obj));
+        } else {
+            obj_str = object_str(car(obj));
+        }
         obj_str_len = strlen(obj_str->string_val);
         buf_len += obj_str_len;
 

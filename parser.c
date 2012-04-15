@@ -40,15 +40,20 @@ Object *parse(char **stream)
         while ((next = parse(stream)) != NULL) {
             if (symbol_eq(next, ")")) {
                 // if we see a closing paren, the nested list is over
+                dec_ref(next);
                 break;
             }
 
+            Object *new_tail = cons(next, NULL);
+            dec_ref(next);
             if (tail == NULL) {
                 // this is the first item, create the list
-                obj = tail = cons(next, NULL);
+                obj = tail = new_tail;
             } else {
                 // append the new item to the tail and keep track of the tail
-                tail = tail->cell_val.cdr = cons(next, NULL);
+                set_cdr(tail, new_tail);
+                tail = new_tail;
+                dec_ref(new_tail);
             }
         }
     } else if (symbol_eq(token, "\"")) {
@@ -59,10 +64,10 @@ Object *parse(char **stream)
         } else if (is_float(token->symbol_val)) {
             obj = float_obj(atof(token->symbol_val));
         } else {
-            // ordinary symbol, return it as-is
-            obj = token;
+            obj = symbol_obj(token->symbol_val);
         }
     }
+    dec_ref(token);
 
     return obj;
 }

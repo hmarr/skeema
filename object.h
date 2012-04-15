@@ -48,9 +48,13 @@ Object *dec_ref(Object *obj);
 // List operations
 Object *car(Object *obj);
 Object *cdr(Object *obj);
+void set_car(Object *obj, Object *car);
+void set_cdr(Object *obj, Object *cdr);
 Object *cons(Object *car, Object *cdr);
 
 // Utilities
+const char *object_type_str(Object *obj);
+void object_debug_print(Object *obj);
 void inspect_object(Object *obj);
 void deep_inspect_object(Object *obj);
 void print_object(Object *obj);

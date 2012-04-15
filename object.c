@@ -59,7 +59,9 @@ Object *dec_ref(Object *obj)
 {
     if (obj == NULL) return NULL;
     if (obj->ref_count == 1) {
-        debug("releasing object: %s", object_str(obj)->string_val);
+        printf("releasing object: ");
+        object_debug_print(obj);
+        puts(" ; ");
 
         switch (obj->type) {
         case CELL:
@@ -97,20 +99,73 @@ Object *cdr(Object *obj)
     return obj->cell_val.cdr;
 }
 
+void set_car(Object *obj, Object *car)
+{
+    dec_ref(obj->cell_val.car);
+    obj->cell_val.car = inc_ref(car);
+}
+
+void set_cdr(Object *obj, Object *cdr)
+{
+    dec_ref(obj->cell_val.cdr);
+    obj->cell_val.cdr = inc_ref(cdr);
+}
+
 Object *cons(Object *car, Object *cdr)
 {
-    inc_ref(car);
-    inc_ref(cdr);
-
     Object *obj = base_obj();
     obj->type = CELL;
-    obj->cell_val = (Cell){ car, cdr };
+    obj->cell_val = (Cell){ inc_ref(car), inc_ref(cdr) };
 
     return obj;
 }
 
 
 // Utilities
+
+const char *object_type_str(Object *obj)
+{
+    if (obj == NULL) return "null";
+    switch (obj->type) {
+    case CELL:
+        return "cell";
+    case INTEGER:
+        return "integer";
+    case FLOAT:
+        return "float";
+    case SYMBOL:
+        return "symbol";
+    case STRING:
+        return "string";
+    default:
+        return "unknown";
+    }
+}
+
+void object_debug_print(Object *obj)
+{
+    switch (obj->type) {
+    case CELL:
+        printf("cell( %s %s )", object_type_str(obj->cell_val.car),
+                                object_type_str(obj->cell_val.cdr));
+        break;
+    case INTEGER:
+        printf("integer( %ld )", obj->int_val);
+        break;
+    case FLOAT:
+        printf("float( %f )", obj->float_val);
+        break;
+    case SYMBOL:
+        printf("symbol( %s )", obj->symbol_val);
+        break;
+    case STRING:
+        printf("string( %s )", obj->string_val);
+        break;
+    default:
+        printf("unknown");
+        break;
+    }
+}
 
 void print_object(Object *obj)
 {
@@ -161,6 +216,7 @@ Object *list_str(Object *obj)
         // copy in the object's string representation
         strncpy(buf + written, obj_str->string_val, obj_str_len);
         written += obj_str_len;
+        dec_ref(obj_str);
 
         // traverse to the next object in the list and continue
         obj = cdr(obj);

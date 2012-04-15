@@ -1,18 +1,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 #include "utils.h"
 #include "scanner.h"
 
-bool is_space(char c)
-{
-    return c == ' ' || c == '\t' || c == '\n';
-}
-
 bool is_delim(char c)
 {
-    return is_space(c) || c == '(' || c == ')' || c == '\0';
+    return isspace(c) || c == '(' || c == ')' || c == '\0';
 }
 
 Object *read_token(char **stream_ptr)
@@ -21,7 +17,7 @@ Object *read_token(char **stream_ptr)
     int token_len = 1;
 
     // skip whitespace to start reading a token
-    while (is_space(**stream_ptr)) (*stream_ptr)++;
+    while (isspace(**stream_ptr)) (*stream_ptr)++;
 
     // check we're not at the end of the stream
     if (**stream_ptr == '\0') {

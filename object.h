@@ -51,7 +51,6 @@ Object *cdr(Object *obj);
 Object *cons(Object *car, Object *cdr);
 
 // Utilities
-bool symbol_eq(Object *a, Object *b);
 void inspect_object(Object *obj);
 void deep_inspect_object(Object *obj);
 void print_object(Object *obj);

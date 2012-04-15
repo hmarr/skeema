@@ -112,14 +112,6 @@ Object *cons(Object *car, Object *cdr)
 
 // Utilities
 
-bool symbol_eq(Object *a, Object *b)
-{
-    if (a->type != SYMBOL || b->type != SYMBOL) {
-        return false;
-    }
-    return strcmp(a->symbol_val, b->symbol_val) == 0;
-}
-
 void print_object(Object *obj)
 {
     Object *str = object_str(obj);

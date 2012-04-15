@@ -6,6 +6,8 @@
 #include "utils.h"
 #include "scanner.h"
 
+#define STR_BUFFER_CHUNK_SIZE (32)
+
 bool is_delim(char c)
 {
     return isspace(c) || c == '(' || c == ')' || c == '\0';
@@ -24,8 +26,8 @@ Object *read_token(char **stream_ptr)
         return NULL;
     }
 
-    if (**stream_ptr == '(' || **stream_ptr == ')') {
-        // return parens individually
+    if (**stream_ptr == '(' || **stream_ptr == ')' || **stream_ptr == '"') {
+        // return parens and double quotes individually
         token_len = 1;
     } else {
         // find out token size
@@ -44,5 +46,38 @@ Object *read_token(char **stream_ptr)
     *stream_ptr += token_len;
 
     return token;
+}
+
+Object *read_string_literal(char **stream_ptr)
+{
+    bool escape = false;
+    int buf_size = STR_BUFFER_CHUNK_SIZE, i = 0;
+    char c, *buf = (char *)malloc(buf_size);
+
+    do {
+        c = **stream_ptr;
+        if (!escape && c == '"') break;  // stop if we hit the final quote
+
+        // if we hit an unescaped backslash, it's escaping something else
+        escape = c == '\\' && !escape;
+        if (escape) continue;  // escape chars are not part of the string
+
+        if (i == buf_size - 1) {
+            debug("buffer too small (%d), reallocing", buf_size);
+            buf_size += STR_BUFFER_CHUNK_SIZE;
+            buf = realloc(buf, buf_size);
+        }
+
+        buf[i++] = c;  // copy character to temp buffer
+    } while ((*stream_ptr)++);
+
+    (*stream_ptr)++;  // move over the final quote
+
+    buf[i] = '\0';  // terminate the string
+
+    Object *string = string_obj(buf);
+    free(buf);
+
+    return string;
 }
 

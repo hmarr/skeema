@@ -5,6 +5,14 @@
 #include "scanner.h"
 #include "object.h"
 
+bool symbol_eq(Object *a, char *b)
+{
+    if (a->type != SYMBOL) {
+        return false;
+    }
+    return strcmp(a->symbol_val, b) == 0;
+}
+
 bool is_integer(const char *str)
 {
     while (*str != '\0') {
@@ -26,12 +34,11 @@ Object *parse(char **stream)
 {
     Object *token, *next, *obj, *tail;
     token = read_token(stream);
-    if (symbol_eq(token, symbol_obj("("))) {
+    if (symbol_eq(token, "(")) {
         // start a new nested list
         obj = tail = NULL;
         while ((next = parse(stream)) != NULL) {
-            debug(object_str(next)->string_val);
-            if (symbol_eq(next, symbol_obj(")"))) {
+            if (symbol_eq(next, ")")) {
                 // if we see a closing paren, the nested list is over
                 break;
             }
@@ -44,6 +51,8 @@ Object *parse(char **stream)
                 tail = tail->cell_val.cdr = cons(next, NULL);
             }
         }
+    } else if (symbol_eq(token, "\"")) {
+        obj = read_string_literal(stream);
     } else {
         if (is_integer(token->symbol_val)) {
             obj = int_obj(atol(token->symbol_val));

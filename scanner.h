@@ -3,7 +3,7 @@
 
 #include "object.h"
 
-Object *read_token(char **stream_ptr);
-Object *read_string_literal(char **stream_ptr);
+sk_Object *sk_read_symbol(char **stream_ptr);
+sk_Object *sk_read_string_literal(char **stream_ptr);
 
 #endif

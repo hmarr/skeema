@@ -3,7 +3,7 @@
 
 #include "object.h"
 
-Object *parse(char **stream);
+sk_Object *sk_parse(char **stream);
 
 #endif
 

@@ -13,9 +13,9 @@ bool is_delim(char c)
     return isspace(c) || c == '(' || c == ')' || c == '\0';
 }
 
-Object *read_token(char **stream_ptr)
+sk_Object *sk_read_symbol(char **stream_ptr)
 {
-    Object *token = NULL;
+    sk_Object *token = NULL;
     int token_len = 1;
 
     // skip whitespace to start reading a token
@@ -39,7 +39,7 @@ Object *read_token(char **stream_ptr)
     memset(buf, 0, token_len + 1);
     strncpy(buf, *stream_ptr, token_len);
     // wrap the token up as a symbol
-    token = symbol_obj(buf);
+    token = sk_symbol_new(buf);
     free(buf);
 
     // advance the stream pointer for next time
@@ -48,7 +48,7 @@ Object *read_token(char **stream_ptr)
     return token;
 }
 
-Object *read_string_literal(char **stream_ptr)
+sk_Object *sk_read_string_literal(char **stream_ptr)
 {
     bool escape = false;
     int buf_size = STR_BUFFER_CHUNK_SIZE, i = 0;
@@ -75,7 +75,7 @@ Object *read_string_literal(char **stream_ptr)
 
     buf[i] = '\0';  // terminate the string
 
-    Object *string = string_obj(buf);
+    sk_Object *string = sk_string_new(buf);
     free(buf);
 
     return string;

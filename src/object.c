@@ -78,7 +78,8 @@ void sk_cell_set_cdr(sk_Object *obj, sk_Object *cdr)
 
 // Int functions
 
-sk_Object *sk_int_new(long value) {
+sk_Object *sk_int_new(long value)
+{
     sk_new_object_init(sk_Int)
     obj->type = sk_INT;
     obj->int_val = value;
@@ -88,7 +89,8 @@ sk_Object *sk_int_new(long value) {
 
 // Float functions
 
-sk_Object *sk_float_new(double value) {
+sk_Object *sk_float_new(double value)
+{
     sk_new_object_init(sk_Float)
     obj->type = sk_FLOAT;
     obj->float_val = value;
@@ -98,7 +100,8 @@ sk_Object *sk_float_new(double value) {
 
 // String functions
 
-sk_Object *sk_string_new(const char *value) {
+sk_Object *sk_string_new(const char *value)
+{
     sk_new_object_init(sk_String)
     obj->type = sk_STRING;
     obj->cstr = (char *)malloc(strlen(value) + 1);
@@ -109,7 +112,8 @@ sk_Object *sk_string_new(const char *value) {
 
 // Symbol functions
 
-sk_Object *sk_symbol_new(const char *name) {
+sk_Object *sk_symbol_new(const char *name)
+{
     sk_new_object_init(sk_Symbol)
     obj->type = sk_SYMBOL;
     obj->name_cstr = (char *)malloc(strlen(name) + 1);
@@ -143,24 +147,33 @@ void sk_object_debug_print(sk_Object *obj)
 {
     switch (obj->type) {
     case sk_CELL:
-        printf("<%s (%s %s)>", sk_object_type_to_cstr(obj),
-                               sk_object_type_to_cstr(sk_cell_car(obj)),
-                               sk_object_type_to_cstr(sk_cell_cdr(obj)));
+        printf("<%s (%s %s) at %p>", sk_object_type_to_cstr(obj),
+                                     sk_object_type_to_cstr(sk_cell_car(obj)),
+                                     sk_object_type_to_cstr(sk_cell_cdr(obj)),
+                                     (void *)obj);
         break;
     case sk_INT:
-        printf("<%s %ld>", sk_object_type_to_cstr(obj), sk_int_val(obj));
+        printf("<%s %ld at %p>", sk_object_type_to_cstr(obj),
+                                 sk_int_val(obj),
+                                 (void *)obj);
         break;
     case sk_FLOAT:
-        printf("<%s %f>", sk_object_type_to_cstr(obj), sk_float_val(obj));
+        printf("<%s %f at %p>", sk_object_type_to_cstr(obj),
+                                sk_float_val(obj),
+                                (void *)obj);
         break;
     case sk_STRING:
-        printf("<%s \"%s\">", sk_object_type_to_cstr(obj), sk_string_cstr(obj));
+        printf("<%s \"%s\" at %p>", sk_object_type_to_cstr(obj),
+                                    sk_string_cstr(obj),
+                                    (void *)obj);
         break;
     case sk_SYMBOL:
-        printf("<%s '%s>", sk_object_type_to_cstr(obj), sk_symbol_cstr(obj));
+        printf("<%s '%s at %p>", sk_object_type_to_cstr(obj),
+                                 sk_symbol_cstr(obj),
+                                 (void *)obj);
         break;
     default:
-        printf("<%s>", sk_object_type_to_cstr(obj));
+        printf("<%s at %p>", sk_object_type_to_cstr(obj), (void *)obj);
         break;
     }
 }

@@ -2,8 +2,9 @@
 #define _PARSER_H
 
 #include "object.h"
+#include "vm.h"
 
-sk_Object *sk_parse(char **stream);
+sk_Object *sk_parse(const sk_VM *vm, char **stream);
 
 #endif
 

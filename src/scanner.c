@@ -13,7 +13,7 @@ bool is_delim(char c)
     return isspace(c) || c == '(' || c == ')' || c == '\0';
 }
 
-sk_Object *sk_read_symbol(char **stream_ptr)
+sk_Object *sk_read_symbol(const sk_VM *vm, char **stream_ptr)
 {
     sk_Object *token = NULL;
     int token_len = 1;
@@ -39,7 +39,7 @@ sk_Object *sk_read_symbol(char **stream_ptr)
     memset(buf, 0, token_len + 1);
     strncpy(buf, *stream_ptr, token_len);
     // wrap the token up as a symbol
-    token = sk_symbol_new(buf);
+    token = sk_vm_get_symbol(vm, buf);
     free(buf);
 
     // advance the stream pointer for next time

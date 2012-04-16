@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "dict.h"
 #include "object.h"
@@ -9,6 +10,12 @@ sk_Dict *sk_dict_new()
     sk_Dict *dict = (sk_Dict *)malloc(sizeof(sk_Dict));
     dict->entries = NULL;
     return dict;
+}
+
+void sk_dict_dealloc(sk_Dict *dict)
+{
+    sk_dec_ref(dict->entries);
+    free(dict);
 }
 
 sk_Object *sk_dict_lookup_item(sk_Dict *dict, const char *key)
@@ -27,7 +34,11 @@ sk_Object *sk_dict_lookup_item(sk_Dict *dict, const char *key)
 
 sk_Object *sk_dict_get(sk_Dict *dict, const char *key)
 {
-    return sk_cell_cdr(sk_dict_lookup_item(dict, key));
+    sk_Object *item = sk_dict_lookup_item(dict, key);
+    if (item == NULL) {
+        return NULL;
+    }
+    return sk_cell_cdr(item);
 }
 
 void sk_dict_set(sk_Dict *dict, const char *key, sk_Object *val)
@@ -39,11 +50,29 @@ void sk_dict_set(sk_Dict *dict, const char *key, sk_Object *val)
         sk_dec_ref(key_sym);
 
         // Create the entry
+        sk_Object *old_head = dict->entries;
         dict->entries = sk_cell_new(item, dict->entries);
+        // old head now in the capable hands of new head
+        sk_dec_ref(old_head);
         sk_dec_ref(item);
     } else {
         // Overwrite the entry
         sk_cell_set_cdr(item, val);
     }
+}
+
+void sk_dict_print(sk_Dict *dict)
+{
+    sk_Object *item, *car_str, *cdr_str, *entry = dict->entries;
+    puts("{");
+    while (entry != NULL) {
+        item = sk_cell_car(entry);
+        car_str = sk_object_to_string(sk_cell_car(item));
+        cdr_str = sk_object_to_string(sk_cell_cdr(item));
+        printf("  %s => %s,\n", sk_string_cstr(car_str),
+                                sk_string_cstr(cdr_str));
+        entry = sk_cell_cdr(entry);
+    }
+    puts("}");
 }
 

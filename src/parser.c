@@ -31,14 +31,14 @@ bool is_float(const char *str)
     return true;
 }
 
-sk_Object *sk_parse(char **stream)
+sk_Object *sk_parse(const sk_VM *vm, char **stream)
 {
     sk_Object *token, *next, *obj, *tail;
-    token = sk_read_symbol(stream);
+    token = sk_read_symbol(vm, stream);
     if (symbol_eq(token, "(")) {
         // start a new nested list
         obj = tail = NULL;
-        while ((next = sk_parse(stream)) != NULL) {
+        while ((next = sk_parse(vm, stream)) != NULL) {
             if (symbol_eq(next, ")")) {
                 // if we see a closing paren, the nested list is over
                 sk_dec_ref(next);
@@ -65,7 +65,7 @@ sk_Object *sk_parse(char **stream)
         } else if (is_float(sk_symbol_cstr(token))) {
             obj = sk_float_new(atof(sk_symbol_cstr(token)));
         } else {
-            obj = sk_symbol_new(sk_symbol_cstr(token));
+            obj = sk_vm_get_symbol(vm, sk_symbol_cstr(token));
         }
     }
     sk_dec_ref(token);

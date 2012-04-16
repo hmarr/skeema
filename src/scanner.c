@@ -5,6 +5,7 @@
 
 #include "utils.h"
 #include "scanner.h"
+#include "sk_objects/string.h"
 
 #define STR_BUFFER_CHUNK_SIZE (32)
 
@@ -13,7 +14,7 @@ bool is_delim(char c)
     return isspace(c) || c == '(' || c == ')' || c == '\0';
 }
 
-sk_Object *sk_read_symbol(const sk_VM *vm, char **stream_ptr)
+sk_Object *sk_read_token(char **stream_ptr)
 {
     sk_Object *token = NULL;
     int token_len = 1;
@@ -38,8 +39,8 @@ sk_Object *sk_read_symbol(const sk_VM *vm, char **stream_ptr)
     char *buf = (char *)malloc(token_len + 1);
     memset(buf, 0, token_len + 1);
     strncpy(buf, *stream_ptr, token_len);
-    // wrap the token up as a symbol
-    token = sk_vm_get_symbol(vm, buf);
+    // wrap the token up as a string
+    token = sk_string_new(buf);
     free(buf);
 
     // advance the stream pointer for next time

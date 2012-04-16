@@ -2,7 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "object.h"
+#include "sk_objects/object.h"
+#include "sk_objects/cell.h"
+#include "sk_objects/symbol.h"
+#include "sk_objects/string.h"
+#include "sk_objects/int.h"
 
 
 sk_Object *sk_nil_sym_val = NULL;
@@ -28,112 +32,26 @@ sk_Object *sk_dec_ref(sk_Object *obj)
 {
     if (obj == sk_nil || obj == NULL) return obj;
     if (obj->ref_count == 1) {
-        printf("releasing object: ");
-        sk_object_debug_print(obj);
-        putchar('\n');
+        //printf("releasing object: %s\n", obj->type->name);
 
-        switch (obj->type) {
-        case sk_CELL:
-            sk_dec_ref(sk_cell_car(obj));
-            sk_dec_ref(sk_cell_cdr(obj));
-            break;
-        case sk_STRING:
-            free(((sk_String *)obj)->cstr);
-            break;
-        case sk_SYMBOL:
-            free(((sk_Symbol *)obj)->name_cstr);
-            break;
-        default:
-            break;
+        // allow objects like cells to clean themselves up
+        if (obj->type->dealloc != NULL) {
+            (obj->type->dealloc)(obj);
         }
-
         free(obj);
+
         return NULL;
     } else {
+        //printf("decreffing object: %s\n", obj->type->name);
         obj->ref_count--;
         return obj;
     }
 }
 
-// Constructor helper
-#define sk_new_object_init(T) \
-    T *obj = (T *)malloc(sizeof(T)); \
-    obj->ref_count = 1;
-
-
-// Cell functions
-
-sk_Object *sk_cell_new(sk_Object *car, sk_Object *cdr)
-{
-    sk_new_object_init(sk_Cell)
-    obj->type = sk_CELL;
-    obj->car = obj->cdr = sk_nil;
-    sk_cell_set_car((sk_Object *)obj, car);
-    sk_cell_set_cdr((sk_Object *)obj, cdr);
-    return (sk_Object *)obj;
-}
-
-void sk_cell_set_car(sk_Object *obj, sk_Object *car)
-{
-    sk_dec_ref(sk_cell_car(obj));
-    ((sk_Cell *)obj)->car = sk_inc_ref(car);
-}
-
-void sk_cell_set_cdr(sk_Object *obj, sk_Object *cdr)
-{
-    sk_dec_ref(sk_cell_cdr(obj));
-    ((sk_Cell *)obj)->cdr = sk_inc_ref(cdr);
-}
-
-
-// Int functions
-
-sk_Object *sk_int_new(long value)
-{
-    sk_new_object_init(sk_Int)
-    obj->type = sk_INT;
-    obj->int_val = value;
-    return (sk_Object *)obj;
-}
-
-
-// Float functions
-
-sk_Object *sk_float_new(double value)
-{
-    sk_new_object_init(sk_Float)
-    obj->type = sk_FLOAT;
-    obj->float_val = value;
-    return (sk_Object *)obj;
-}
-
-
-// String functions
-
-sk_Object *sk_string_new(const char *value)
-{
-    sk_new_object_init(sk_String)
-    obj->type = sk_STRING;
-    obj->cstr = (char *)malloc(strlen(value) + 1);
-    strcpy(obj->cstr, value);
-    return (sk_Object *)obj;
-}
-
-
-// Symbol functions
-
-sk_Object *sk_symbol_new(const char *name)
-{
-    sk_new_object_init(sk_Symbol)
-    obj->type = sk_SYMBOL;
-    obj->name_cstr = (char *)malloc(strlen(name) + 1);
-    strcpy(obj->name_cstr, name);
-    return (sk_Object *)obj;
-}
-
 
 // Utilities
 
+/*
 const char *sk_object_type_to_cstr(sk_Object *obj)
 {
     if (obj == NULL) return "null";
@@ -192,7 +110,6 @@ void sk_object_debug_print(sk_Object *obj)
     }
 }
 
-/*
 void print_object(Object *obj)
 {
     Object *str = object_str(obj);
@@ -254,8 +171,20 @@ Object *list_str(Object *obj)
     list_str_obj = string_obj(buf);
     free(buf);
     return list_str_obj;
-}*/
+}
+*/
 
+sk_Object *sk_object_to_string(sk_Object *obj)
+{
+    if (obj == NULL) {
+        return sk_string_new("NULL");
+    } else if (obj->type->to_string == NULL) {
+        return sk_string_new(obj->type->name);
+    }
+    return (obj->type->to_string)(obj);
+}
+
+/*
 sk_Object *sk_object_to_string(sk_Object *obj)
 {
     char *buf;
@@ -319,7 +248,9 @@ sk_Object *sk_object_to_string(sk_Object *obj)
         return str_obj;
     }
 }
+*/
 
+/*
 void sk_object_print(sk_Object *obj)
 {
     sk_Object *str = sk_object_to_string(obj);
@@ -327,3 +258,4 @@ void sk_object_print(sk_Object *obj)
     sk_dec_ref(str);
 }
 
+*/

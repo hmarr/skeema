@@ -5,23 +5,21 @@
 #include <string.h>
 
 
-// Object
+// Forward declaration for sk_ObjectType
+typedef struct sk_Object sk_Object;
 
 // Object type definitions. Every sk_Object has a 'type' field that corresponds
-// to one of these values.
-typedef enum {
-    sk_CELL,
-    sk_SYMBOL,
-    sk_STRING,
-    sk_INT,
-    sk_FLOAT,
-    sk_NIL
+// to one of these.
+typedef struct {
+    const char *name;
+    void (*dealloc)(sk_Object *);
+    sk_Object *(*to_string)(sk_Object *);
 } sk_ObjectType;
 
 // Object header to be included in each object struct.
-#define sk_Object_HEADER  \
-    sk_ObjectType type; \
-    int ref_count;
+#define sk_ObjectHeader  \
+    sk_ObjectType *type; \
+    int ref_count
 
 // This is the base type that objects are passed around as. Generally sk_Object
 // isn't used, one of the concrete types (sk_Cell, sk_Int, etc) are used, so
@@ -30,9 +28,20 @@ typedef enum {
 // Each object type has a constructor that takes the form sk_<type>_new. The
 // refcount of the returned object will be 1, so it'll need to be dec_ref'd at
 // some point.
-typedef struct {
-    sk_Object_HEADER
-} sk_Object;
+struct sk_Object {
+    sk_ObjectHeader;
+};
+
+#define sk_object_is(obj, T)  (obj->type == &T)
+
+// Constructor helper
+#define sk_new_object_init(T)         \
+    T *obj;                           \
+    do {                              \
+        obj = (T *)malloc(sizeof(T)); \
+        obj->ref_count = 1;           \
+    } while (0)
+
 
 // nil is a singleton symbol - used instead of NULL for signalling the end of
 // lists, and also represents the empty list.
@@ -52,29 +61,13 @@ sk_Object *sk_dec_ref(sk_Object *obj);
 // string is returned with a reference so it'll need to be dec_ref'd.
 sk_Object *sk_object_to_string(sk_Object *obj);
 
+/*
 // Print the object to stdout.
 void sk_object_print(sk_Object *obj);
 
 
 // Cell
 
-typedef struct {
-    sk_Object_HEADER
-    sk_Object *car;
-    sk_Object *cdr;
-} sk_Cell;
-
-// Retreive the car and cdr values of a cell (returned without references).
-#define sk_cell_car(obj) (((sk_Cell *)(obj))->car)
-#define sk_cell_cdr(obj) (((sk_Cell *)(obj))->cdr)
-
-// Create a new cell object. Both car and cdr are inc_ref'd.
-sk_Object *sk_cell_new(sk_Object *car, sk_Object *cdr);
-
-// Overwrite the current car and cdr values of a cell. The old value is
-// dec_ref'd, and the new value is inc_ref'd.
-void sk_cell_set_car(sk_Object *obj, sk_Object *car);
-void sk_cell_set_cdr(sk_Object *obj, sk_Object *cdr);
 
 
 // Int
@@ -142,5 +135,6 @@ sk_Object *sk_symbol_new(const char *name);
 // Print an object to stdout without dicking around with sk_Objects. This is
 // useful when debugging sk_dec_ref as it won't result in recursive calls.
 void sk_object_debug_print(sk_Object *obj);
+*/
 
 #endif

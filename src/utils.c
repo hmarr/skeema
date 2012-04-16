@@ -3,14 +3,14 @@
 
 #include "utils.h"
 
-void debug(const char* fmt, ...)
+void debug_with_info(const char *file, int line, const char* fmt, ...)
 {
 #ifndef DEBUG
     return;
 #endif
     va_list args;
     va_start(args, fmt);
-    printf("[\033[36mDEBUG\033[0m] ");
+    printf("[\033[36mDEBUG\033[0m] (%s:%d) ", file, line);
     vprintf(fmt, args);
     putchar('\n');
     va_end(args);

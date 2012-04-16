@@ -1,7 +1,8 @@
 #include <stdlib.h>
 
 #include "vm.h"
-#include "object.h"
+#include "sk_objects/dict.h"
+#include "sk_objects/symbol.h"
 
 sk_VM *sk_vm_new()
 {
@@ -13,7 +14,7 @@ sk_VM *sk_vm_new()
 
 void sk_vm_dealloc(sk_VM *vm)
 {
-    sk_dict_dealloc(vm->symbol_table);
+    sk_dec_ref(vm->symbol_table);
     free(vm);
 }
 

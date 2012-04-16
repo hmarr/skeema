@@ -1,10 +1,10 @@
 #ifndef _VM_H
 #define _VM_H
 
-#include "dict.h"
+#include "sk_objects/object.h"
 
 typedef struct {
-    sk_Dict *symbol_table;
+    sk_Object *symbol_table;
 } sk_VM;
 
 sk_VM *sk_vm_new();

@@ -1,7 +1,7 @@
 CC=gcc
 
 INCLUDES= -Iinclude
-CFLAGS= $(INCLUDES) -g -Wall -DDEBUG
+CFLAGS= $(INCLUDES) -g -Wall -DDEBUG -std=c99 -pedantic
 
 BIN= skeema
 SRCS= $(wildcard src/*.c)

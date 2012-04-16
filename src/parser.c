@@ -16,7 +16,8 @@ bool symbol_eq(sk_Object *a, char *b)
 bool is_integer(const char *str)
 {
     while (*str != '\0') {
-        if (!isdigit(*(str++))) return false;
+        if (!isdigit(*str) && *str != '-') return false;
+        str++;
     }
     return true;
 }
@@ -24,7 +25,7 @@ bool is_integer(const char *str)
 bool is_float(const char *str)
 {
     while (*str != '\0') {
-        if (!isdigit(*str) && *str != '.') return false;
+        if (!isdigit(*str) && *str != '.' && *str != '-') return false;
         str++;
     }
     return true;

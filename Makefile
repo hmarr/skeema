@@ -1,8 +1,14 @@
-all: debug
+CC=gcc
 
-release:
-	gcc -O2 -o skeema skeema.c utils.c object.c scanner.c parser.c
+INCLUDES= -Iinclude
+CFLAGS= $(INCLUDES) -g -Wall
 
-debug:
-	gcc -Wall -g -DDEBUG -o skeema skeema.c utils.c object.c scanner.c parser.c
+SRCS= $(wildcard src/*.c)
+OBJS = $(patsubst %.c,%.o,$(SRCS))
+
+%.c.o:
+	$(CC) $(CFLAGS) -c $*.
+
+all: $(OBJS)
+	gcc -o skeema $(OBJS)
 

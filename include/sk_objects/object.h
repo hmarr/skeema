@@ -61,10 +61,10 @@ sk_Object *sk_dec_ref(sk_Object *obj);
 // string is returned with a reference so it'll need to be dec_ref'd.
 sk_Object *sk_object_to_string(sk_Object *obj);
 
-/*
 // Print the object to stdout.
 void sk_object_print(sk_Object *obj);
 
+/*
 
 // Cell
 

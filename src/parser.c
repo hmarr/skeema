@@ -72,6 +72,7 @@ sk_Object *sk_parse(const sk_VM *vm, char **stream)
         obj = sk_parse_list(vm, stream);
     } else if (sk_string_eq_cstr(token, "\"")) {
         obj = sk_read_string_literal(stream);
+        debug_obj("read string: %s", obj);
     } else {
         if (is_integer(sk_string_cstr(token))) {
             obj = sk_int_new(atol(sk_string_cstr(token)));

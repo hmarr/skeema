@@ -15,11 +15,16 @@ sk_Object *sk_symbol_new(const char *name)
 
 sk_Object *sk_symbol_to_string(sk_Object *obj)
 {
-    int buf_len = sk_symbol_length(obj) + 2;  // strlen + \0 + quote
-    char *buf = (char *)malloc(buf_len);
-    snprintf(buf, buf_len, "'%s", sk_symbol_cstr(obj));
-    sk_Object *str_obj = sk_string_new(buf);
-    free(buf);
+    sk_Object *str_obj;
+    if (obj == sk_nil) {
+        str_obj = sk_string_new("nil");
+    } else {
+        int buf_len = sk_symbol_length(obj) + 2;  // strlen + \0 + quote
+        char *buf = (char *)malloc(buf_len);
+        snprintf(buf, buf_len, "'%s", sk_symbol_cstr(obj));
+        str_obj = sk_string_new(buf);
+        free(buf);
+    }
     return str_obj;
 }
 

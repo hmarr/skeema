@@ -11,51 +11,45 @@
 #include "vm.h"
 */
 
-/*
 void start_repl(sk_VM *vm)
 {
     char *line = (char *)malloc(1024);
     while (printf("skeema> "), fgets(line, 1024, stdin)) {
         if (line[0] == '\n') continue;
-        sk_Object *sexp = sk_parse(vm, &line);
-        sk_object_print(sexp);
-        sk_dec_ref(sexp);
+        sk_Object *exp = sk_parse(vm, &line);
+        sk_object_print(exp);
+        sk_dec_ref(exp);
     }
     //sk_dict_print(vm->symbol_table);
 }
-*/
 
 int main(int argc, char *argv[])
 {
-    /*
     sk_VM *vm = sk_vm_new();
 
     if (argc == 1) {
         start_repl(vm);
     } else {
-        sk_Object *sexp = sk_parse(vm, &argv[1]);
-        sk_object_print(sexp);
-        sk_dec_ref(sexp);
+        sk_Object *exp = sk_parse(vm, &argv[1]);
+        sk_object_print(exp);
+        sk_dec_ref(exp);
     }
 
     sk_vm_dealloc(vm);
-    */
 
+    /*
     sk_VM *vm = sk_vm_new();
 
     char *code = "(3 4.5 (upcase 8 6.5 \"harry\") 7)";
     sk_Object *exp = sk_parse(vm, &code);
-    puts("sk_object_to_string(exp) {");
     sk_Object *exp_str = sk_object_to_string(exp);
-    puts("}\n");
 
-    puts("exp_str {");
     puts(sk_string_cstr(exp_str));
-    puts("}\n");
     sk_dec_ref(exp);
     sk_dec_ref(exp_str);
 
     sk_vm_dealloc(vm);
+    */
 
     /*
     sk_Object *val, *a, *b, *c, *d;

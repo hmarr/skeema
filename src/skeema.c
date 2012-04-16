@@ -11,7 +11,7 @@ void start_repl()
     while (printf("skeema> "), fgets(line, 1024, stdin)) {
         if (line[0] == '\n') continue;
         sk_Object *sexp = sk_parse(&line);
-        puts(sk_string_cstr(sk_object_to_string(sexp)));
+        sk_object_print(sexp);
         sk_dec_ref(sexp);
     }
 }
@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
         start_repl();
     } else {
         sk_Object *sexp = sk_parse(&argv[1]);
-        puts(sk_string_cstr(sk_object_to_string(sexp)));
+        sk_object_print(sexp);
         sk_dec_ref(sexp);
     }
 

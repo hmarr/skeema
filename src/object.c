@@ -292,3 +292,10 @@ sk_Object *sk_object_to_string(sk_Object *obj)
     }
 }
 
+void sk_object_print(sk_Object *obj)
+{
+    sk_Object *str = sk_object_to_string(obj);
+    puts(sk_string_cstr(str));
+    sk_dec_ref(str);
+}
+

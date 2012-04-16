@@ -6,3 +6,4 @@
 #include "sk_objects/proc.h"
 #include "sk_objects/dict.h"
 #include "parser.h"
+#include "eval.h"

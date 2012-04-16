@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "utils.h"
 #include "sk_objects/dict.h"
 #include "sk_objects/cell.h"
 #include "sk_objects/string.h"
@@ -77,7 +78,6 @@ void sk_dict_print(sk_Object *dict)
 
 void sk_dict_dealloc(sk_Object *dict)
 {
-    puts("freeing dict");
     sk_dec_ref(sk_dict_head(dict));
 }
 

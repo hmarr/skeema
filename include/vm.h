@@ -5,6 +5,7 @@
 
 typedef struct {
     sk_Object *symbol_table;
+    sk_Object *scope;
 } sk_VM;
 
 sk_VM *sk_vm_new();

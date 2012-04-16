@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "utils.h"
 #include "sk_objects/object.h"
 #include "sk_objects/cell.h"
 #include "sk_objects/symbol.h"

@@ -16,11 +16,11 @@ void debug_with_info(const char *file, int line, const char* fmt, ...)
     va_end(args);
 }
 
-void error(const char* fmt, ...)
+void error_with_info(const char *file, int line, const char* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
-    printf("[\033[31mERROR\033[0m] ");
+    printf("[\033[31mERROR\033[0m] (%s:%d) ", file, line);
     vprintf(fmt, args);
     putchar('\n');
     va_end(args);

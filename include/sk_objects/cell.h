@@ -23,4 +23,7 @@ sk_Object *sk_cell_new(sk_Object *car, sk_Object *cdr);
 void sk_cell_set_car(sk_Object *obj, sk_Object *car);
 void sk_cell_set_cdr(sk_Object *obj, sk_Object *cdr);
 
+// Append obj to the given list. Returns 0 on success and -1 on failure.
+int sk_cell_append(sk_Object *list, sk_Object *obj);
+
 #endif

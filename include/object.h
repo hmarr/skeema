@@ -23,6 +23,9 @@ typedef struct {
     sk_Object_HEADER
 } sk_Object;
 
+sk_Object *sk_nil_sym();
+#define sk_nil (sk_nil_sym())
+
 // Memory management
 sk_Object *sk_inc_ref(sk_Object *obj);
 sk_Object *sk_dec_ref(sk_Object *obj);
@@ -96,7 +99,6 @@ typedef struct {
 #define sk_symbol_length(obj) (strlen(sk_symbol_cstr(obj)))
 
 sk_Object *sk_symbol_new(const char *name);
-
 
 // List operations
 

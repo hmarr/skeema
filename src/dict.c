@@ -8,7 +8,7 @@
 sk_Dict *sk_dict_new()
 {
     sk_Dict *dict = (sk_Dict *)malloc(sizeof(sk_Dict));
-    dict->entries = NULL;
+    dict->entries = sk_nil;
     return dict;
 }
 
@@ -21,7 +21,7 @@ void sk_dict_dealloc(sk_Dict *dict)
 sk_Object *sk_dict_lookup_item(sk_Dict *dict, const char *key)
 {
     sk_Object *item, *entry = dict->entries;
-    while (entry != NULL) {
+    while (entry != sk_nil) {
         item = sk_cell_car(entry);
         if (strcmp(sk_string_cstr(sk_cell_car(item)), key) == 0) {
             return item;
@@ -65,7 +65,7 @@ void sk_dict_print(sk_Dict *dict)
 {
     sk_Object *item, *car_str, *cdr_str, *entry = dict->entries;
     puts("{");
-    while (entry != NULL) {
+    while (entry != sk_nil) {
         item = sk_cell_car(entry);
         car_str = sk_object_to_string(sk_cell_car(item));
         cdr_str = sk_object_to_string(sk_cell_cdr(item));

@@ -7,6 +7,7 @@ sk_VM *sk_vm_new()
 {
     sk_VM *vm = (sk_VM *)malloc(sizeof(sk_VM));
     vm->symbol_table = sk_dict_new();
+    sk_dict_set(vm->symbol_table, "nil", sk_nil);
     return vm;
 }
 

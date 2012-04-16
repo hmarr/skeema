@@ -45,7 +45,7 @@ sk_Object *sk_parse(const sk_VM *vm, char **stream)
                 break;
             }
 
-            sk_Object *new_tail = sk_cell_new(next, NULL);
+            sk_Object *new_tail = sk_cell_new(next, sk_nil);
             sk_dec_ref(next);
             if (tail == NULL) {
                 // this is the first item, create the list
@@ -56,6 +56,11 @@ sk_Object *sk_parse(const sk_VM *vm, char **stream)
                 tail = new_tail;
                 sk_dec_ref(new_tail);
             }
+        }
+
+        if (obj == NULL) {
+            // empty list is equivalent to nil
+            obj = sk_nil;
         }
     } else if (symbol_eq(token, "\"")) {
         obj = sk_read_string_literal(stream);

@@ -5,18 +5,28 @@
 #include "object.h"
 
 
+sk_Object *sk_nil_sym_val = NULL;
+sk_Object *sk_nil_sym()
+{
+    if (sk_nil_sym_val == NULL) {
+        sk_nil_sym_val = sk_symbol_new("nil");
+    }
+    return sk_nil_sym_val;
+}
+
+
 // Memory management
 
 sk_Object *sk_inc_ref(sk_Object *obj)
 {
-    if (obj == NULL) return NULL;
+    if (obj == sk_nil || obj == NULL) return obj;
     obj->ref_count++;
     return obj;
 }
 
 sk_Object *sk_dec_ref(sk_Object *obj)
 {
-    if (obj == NULL) return NULL;
+    if (obj == sk_nil || obj == NULL) return obj;
     if (obj->ref_count == 1) {
         printf("releasing object: ");
         sk_object_debug_print(obj);
@@ -57,7 +67,7 @@ sk_Object *sk_cell_new(sk_Object *car, sk_Object *cdr)
 {
     sk_new_object_init(sk_Cell)
     obj->type = sk_CELL;
-    obj->car = obj->cdr = NULL;
+    obj->car = obj->cdr = sk_nil;
     sk_cell_set_car((sk_Object *)obj, car);
     sk_cell_set_cdr((sk_Object *)obj, cdr);
     return (sk_Object *)obj;
@@ -137,7 +147,11 @@ const char *sk_object_type_to_cstr(sk_Object *obj)
     case sk_STRING:
         return "String";
     case sk_SYMBOL:
-        return "Symbol";
+        if (obj == sk_nil) {
+            return "Nil";
+        } else {
+            return "Symbol";
+        }
     default:
         return "unrecognised";
     }
@@ -249,6 +263,8 @@ sk_Object *sk_object_to_string(sk_Object *obj)
 
     if (obj == NULL) {
         return sk_string_new("null");
+    } else if (obj == sk_nil) {
+        return sk_string_new("nil");
     } else {
         sk_Object *car_str, *cdr_str;
 

@@ -68,7 +68,10 @@ sk_Object *sk_eval(sk_VM *vm, sk_Object *exp)
         return sk_inc_ref(exp);
     }
 
-    if (sk_cell_car(exp) == sk_vm_get_symbol(vm, "def")) {
+    sk_Object *def_sym = sk_vm_get_symbol(vm, "def");
+    bool def_form = sk_cell_car(exp) == def_sym;
+    sk_dec_ref(def_sym);
+    if (def_form) {
         // special form, woo!
         exp = sk_cell_cdr(exp);  // advance to the name cell
         sk_Object *name = sk_cell_car(exp);
@@ -86,6 +89,13 @@ sk_Object *sk_eval(sk_VM *vm, sk_Object *exp)
         sk_dict_set(vm->scope, sk_symbol_cstr(name), sk_cell_car(exp));
 
         return NULL;  // is this the right thing to do?
+    }
+
+    sk_Object *quote_sym = sk_vm_get_symbol(vm, "quote");
+    bool quote_form = sk_cell_car(exp) == quote_sym;
+    sk_dec_ref(quote_sym);
+    if (quote_form) {
+        return sk_inc_ref(sk_cell_car(sk_cell_cdr(exp)));
     }
 
     // we've got a list, which means function invocation

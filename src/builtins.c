@@ -34,11 +34,22 @@ sk_Object *sk_builtins_sum(sk_Object *scope, sk_Object *args)
     return sk_int_new(int_sum);
 }
 
+sk_Object *sk_builtins_print_scope(sk_Object *scope, sk_Object *args)
+{
+    sk_dict_print(scope);
+    return NULL;
+}
+
 void sk_builtins_populate_scope(sk_Object *scope)
 {
-    sk_Object *builtin = sk_proc_new("sum", &sk_builtins_sum, 0, -1);
-    sk_dict_set(scope, "sum", builtin);
+    sk_Object *builtin;
+
+    builtin = sk_proc_new("+", &sk_builtins_sum, 0, -1);
     sk_dict_set(scope, "+", builtin);
+    sk_dec_ref(builtin);
+
+    builtin = sk_proc_new("print-scope", &sk_builtins_print_scope, 0, 0);
+    sk_dict_set(scope, "print-scope", builtin);
     sk_dec_ref(builtin);
 }
 

@@ -13,6 +13,7 @@ sk_VM *sk_vm_new()
     sk_dict_set(vm->symbol_table, "nil", sk_nil);
 
     vm->scope = sk_dict_new();
+    sk_dict_set(vm->scope, "nil", sk_nil);
     sk_builtins_populate_scope(vm->scope);
 
     return vm;

@@ -68,6 +68,26 @@ sk_Object *sk_eval(sk_VM *vm, sk_Object *exp)
         return sk_inc_ref(exp);
     }
 
+    if (sk_cell_car(exp) == sk_vm_get_symbol(vm, "def")) {
+        // special form, woo!
+        exp = sk_cell_cdr(exp);  // advance to the name cell
+        sk_Object *name = sk_cell_car(exp);
+        if (!sk_object_is(name, sk_SymbolType)) {
+            error("def arg 1 must be a symbol, not a %s", name->type->name);
+            return NULL;
+        }
+
+        exp = sk_cell_cdr(exp);  // advance to the value cell
+        if (sk_cell_cdr(exp) != sk_nil) {
+            error("def takes exactly 2 args");
+            return NULL;
+        }
+
+        sk_dict_set(vm->scope, sk_symbol_cstr(name), sk_cell_car(exp));
+
+        return NULL;  // is this the right thing to do?
+    }
+
     // we've got a list, which means function invocation
     // start by resolving the function
     sk_Object *result, *proc = sk_eval(vm, sk_cell_car(exp));

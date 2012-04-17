@@ -38,6 +38,7 @@ void sk_builtins_populate_scope(sk_Object *scope)
 {
     sk_Object *builtin = sk_proc_new("sum", &sk_builtins_sum, 0, -1);
     sk_dict_set(scope, "sum", builtin);
+    sk_dict_set(scope, "+", builtin);
     sk_dec_ref(builtin);
 }
 

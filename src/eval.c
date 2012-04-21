@@ -41,7 +41,7 @@ sk_Object *sk_apply(sk_VM *vm, sk_Object *proc, sk_Object *arg_exp)
 
     // we've got our list of evalled args, let's invoke the proc!
     debug_obj("calling with args: %s", args);
-    sk_Object *result = sk_proc_fn(proc)(vm->scope, args);
+    sk_Object *result = sk_proc_fn(proc)(vm, vm->scope, args);
     // now that's out the way we're done with our args
     sk_dec_ref(args);
     return result;

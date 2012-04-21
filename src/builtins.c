@@ -7,8 +7,9 @@
 #include "sk_objects/float.h"
 #include "sk_objects/dict.h"
 #include "sk_objects/proc.h"
+#include "eval.h"
 
-sk_Object *sk_builtins_sum(sk_Object *scope, sk_Object *args)
+sk_Object *sk_builtins_sum(sk_VM *vm, sk_Object *scope, sk_Object *args)
 {
     bool return_float = false;
     double float_sum = 0.0;
@@ -34,10 +35,15 @@ sk_Object *sk_builtins_sum(sk_Object *scope, sk_Object *args)
     return sk_int_new(int_sum);
 }
 
-sk_Object *sk_builtins_print_scope(sk_Object *scope, sk_Object *args)
+sk_Object *sk_builtins_print_scope(sk_VM *vm, sk_Object *scope, sk_Object *args)
 {
     sk_dict_print(scope);
     return NULL;
+}
+
+sk_Object *sk_builtins_eval(sk_VM *vm, sk_Object *scope, sk_Object *args)
+{
+    return sk_eval(vm, sk_cell_car(args));
 }
 
 void sk_builtins_populate_scope(sk_Object *scope)
@@ -50,6 +56,10 @@ void sk_builtins_populate_scope(sk_Object *scope)
 
     builtin = sk_proc_new("print-scope", &sk_builtins_print_scope, 0, 0);
     sk_dict_set(scope, "print-scope", builtin);
+    sk_dec_ref(builtin);
+
+    builtin = sk_proc_new("eval", &sk_builtins_eval, 0, 0);
+    sk_dict_set(scope, "eval", builtin);
     sk_dec_ref(builtin);
 }
 

@@ -3,9 +3,10 @@
 
 #include "sk_objects/proc.h"
 #include "sk_objects/string.h"
+#include "vm.h"
 
 sk_Object *sk_proc_new(const char *name,
-                       sk_Object *(*fn)(sk_Object *, sk_Object *),
+                       sk_Object *(*fn)(sk_VM *, sk_Object *, sk_Object *),
                        int min_arity, int max_arity)
 {
     sk_new_object_init(sk_Proc);

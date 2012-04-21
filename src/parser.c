@@ -66,8 +66,24 @@ sk_Object *sk_parse(const sk_VM *vm, char **stream)
     sk_Object *token, *obj;
     token = sk_read_token(stream);
     debug_obj("read token: %s", token);
-    if (sk_string_eq_cstr(token, ")")) {
+    if (token == NULL) {
+        error("unexpected end of stream");
         obj = NULL;
+    } else if (sk_string_eq_cstr(token, ")")) {
+        obj = NULL;
+    } else if (sk_string_eq_cstr(token, "'")) {
+        // TODO: fix bug with double quote
+        sk_Object *expr  = sk_parse(vm, stream),
+                  *quote = sk_vm_get_symbol(vm, "quote");
+        if (expr == NULL) {
+            error("no expression for quoting");
+            obj = NULL;
+        } else {
+            obj = sk_cell_new(quote, sk_nil);
+            sk_cell_append(obj, expr);
+        }
+        sk_dec_ref(expr);
+        sk_dec_ref(quote);
     } else if (sk_string_eq_cstr(token, "(")) {
         obj = sk_parse_list(vm, stream);
     } else if (sk_string_eq_cstr(token, "\"")) {

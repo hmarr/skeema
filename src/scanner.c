@@ -27,7 +27,8 @@ sk_Object *sk_read_token(char **stream_ptr)
         return NULL;
     }
 
-    if (**stream_ptr == '(' || **stream_ptr == ')' || **stream_ptr == '"') {
+    if (**stream_ptr == '(' || **stream_ptr == ')'||
+        **stream_ptr == '"' || **stream_ptr == '\'') {
         // return parens and double quotes individually
         token_len = 1;
     } else {

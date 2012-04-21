@@ -4,8 +4,8 @@ INCLUDES= -Iinclude
 CFLAGS= $(INCLUDES) -g -Wall -std=c99 -pedantic
 
 DEBUG ?= 1
-ifeq (DEBUG, 1)
-    CFLAGS =-DDEBUG
+ifeq ($(DEBUG), 1)
+    CFLAGS += -DDEBUG
 endif
 
 BIN= skeema

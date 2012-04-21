@@ -10,6 +10,10 @@ void start_repl(sk_VM *vm)
     while (printf("skeema> "), fgets(line, 1024, stdin)) {
         if (line[0] == '\n') continue;
         sk_Object *exp = sk_parse(vm, &line);
+        if (exp == NULL) {
+            continue;
+        }
+
         sk_Object *result = sk_eval(vm, exp);
         sk_dec_ref(exp);
 
@@ -27,6 +31,10 @@ int main(int argc, char *argv[])
         start_repl(vm);
     } else {
         sk_Object *exp = sk_parse(vm, &argv[1]);
+        if (exp == NULL) {
+            return -1;
+        }
+
         sk_Object *result = sk_eval(vm, exp);
         sk_dec_ref(exp);
 

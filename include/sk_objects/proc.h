@@ -19,7 +19,7 @@ sk_ObjectType sk_ProcType;
 #define sk_proc_max_arity(obj) (((sk_Proc *)(obj))->max_arity)
 #define sk_proc_fn(obj)        (((sk_Proc *)(obj))->fn)
 
-// Create a new sk_Int object from a long int.
+// Create a new sk_Proc object from a name, function and arity
 sk_Object *sk_proc_new(const char *name,
                        sk_Object *(*fn)(sk_VM *, sk_Object *, sk_Object *),
                        int min_arity, int max_arity);

@@ -2,6 +2,7 @@
 #define _SYMBOL_H
 
 #include "sk_objects/object.h"
+#include "vm.h"
 
 typedef struct {
     sk_ObjectHeader;
@@ -18,6 +19,9 @@ sk_ObjectType sk_SymbolType;
 // Create a new sk_Symbol object from a C string. Generally this should not be
 // used directly - prefer sk_vm_get_symbol, which uses the VM's symbol table.
 sk_Object *sk_symbol_new(const char *name);
+
+// Check if a sk_Symbol object is equal to the given named symbol.
+bool sk_symbol_is(sk_VM *vm, sk_Object *sym, const char *name);
 
 void sk_symbol_dealloc(sk_Object *symbol);
 

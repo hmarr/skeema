@@ -47,6 +47,28 @@ sk_Object *sk_apply(sk_VM *vm, sk_Object *proc, sk_Object *arg_exp)
     return result;
 }
 
+sk_Object *sk_eval_def(sk_VM *vm, sk_Object *exp)
+{
+    exp = sk_cell_cdr(exp);  // advance to the name cell
+    sk_Object *name = sk_cell_car(exp);
+    if (!sk_object_is(name, sk_SymbolType)) {
+        error("def arg 1 must be a symbol, not a %s", name->type->name);
+        return NULL;
+    }
+
+    exp = sk_cell_cdr(exp);  // advance to the value cell
+    if (sk_cell_cdr(exp) != sk_nil) {
+        error("def takes exactly 2 args");
+        return NULL;
+    }
+
+    sk_Object *value = sk_eval(vm, sk_cell_car(exp));
+    sk_dict_set(vm->scope, sk_symbol_cstr(name), value);
+    sk_dec_ref(value);
+
+    return NULL;  // is this the right thing to do?
+}
+
 sk_Object *sk_eval(sk_VM *vm, sk_Object *exp)
 {
     debug_obj("eval: %s", exp);
@@ -68,27 +90,8 @@ sk_Object *sk_eval(sk_VM *vm, sk_Object *exp)
         return sk_inc_ref(exp);
     }
 
-    sk_Object *def_sym = sk_vm_get_symbol(vm, "def");
-    bool def_form = sk_cell_car(exp) == def_sym;
-    sk_dec_ref(def_sym);
-    if (def_form) {
-        // special form, woo!
-        exp = sk_cell_cdr(exp);  // advance to the name cell
-        sk_Object *name = sk_cell_car(exp);
-        if (!sk_object_is(name, sk_SymbolType)) {
-            error("def arg 1 must be a symbol, not a %s", name->type->name);
-            return NULL;
-        }
-
-        exp = sk_cell_cdr(exp);  // advance to the value cell
-        if (sk_cell_cdr(exp) != sk_nil) {
-            error("def takes exactly 2 args");
-            return NULL;
-        }
-
-        sk_dict_set(vm->scope, sk_symbol_cstr(name), sk_cell_car(exp));
-
-        return NULL;  // is this the right thing to do?
+    if (sk_symbol_is(vm, sk_cell_car(exp), "def")) {
+        return sk_eval_def(vm, exp);
     }
 
     sk_Object *quote_sym = sk_vm_get_symbol(vm, "quote");

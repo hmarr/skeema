@@ -28,6 +28,19 @@ sk_Object *sk_symbol_to_string(sk_Object *obj)
     return str_obj;
 }
 
+bool sk_symbol_is(sk_VM *vm, sk_Object *sym, const char *name)
+{
+    if (!sk_object_is(sym, sk_SymbolType)) {
+        return false;
+    }
+
+    sk_Object *named_sym = sk_vm_get_symbol(vm, name);
+    bool equal = sym == named_sym;
+    sk_dec_ref(named_sym);
+
+    return equal;
+}
+
 void sk_symbol_dealloc(sk_Object *symbol)
 {
     free(sk_symbol_cstr(symbol));

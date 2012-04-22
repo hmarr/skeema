@@ -174,7 +174,8 @@ sk_Object *sk_eval(sk_VM *vm, sk_Object *exp)
     }
 
     // special form: lambda
-    if (sk_symbol_is(vm, sk_cell_car(exp), "lambda")) {
+    if (sk_symbol_is(vm, sk_cell_car(exp), "lambda") ||
+        sk_symbol_is(vm, sk_cell_car(exp), "->")) {
         return sk_eval_lambda(vm->scope, exp);
     }
 
